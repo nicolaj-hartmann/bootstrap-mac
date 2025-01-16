@@ -31,13 +31,14 @@ defaults write com.apple.dock persistent-apps -array
 # restart dock
 killall Dock
 
-#delete garage band, freeform, imovie, pages, numbers, keynote
-sudo rm -rf /Applications/GarageBand.app
-sudo rm -rf /Applications/Freeform.app
-sudo rm -rf /Applications/iMovie.app
-sudo rm -rf /Applications/Pages.app
-sudo rm -rf /Applications/Numbers.app
-sudo rm -rf /Applications/Keynote.app
+#delete garage band, freeform, imovie, pages, numbers, keynote But only do it if they dont exists so may make a list of app filenames to be deleted
+apps_to_delete=("GarageBand" "Freeform" "iMovie" "Pages" "Numbers" "Keynote")   
+for app in "${apps_to_delete[@]}"; do
+    if [[ -d "/Applications/$app.app" ]]; then
+        sudo rm -rf "/Applications/$app.app"
+    fi
+done
+
 
 echo "########################################################"
 echo "#### Done"
