@@ -4,6 +4,9 @@ echo "########################################################"
 echo "#### Checking for Homebrew and adding to PATH if needed"
 echo "########################################################"
 
+echo "Adding touchId sudo support"
+sudo grep -Fxq "auth sufficient pam_tid.so" /etc/pam.d/sudo || sudo sed -i.bak '1s/^/auth sufficient pam_tid.so\n/' /etc/pam.d/sudo
+
 # Check for Homebrew and add to PATH if needed
 if [[ ! -f "/opt/homebrew/bin/brew" ]]; then
     echo "Homebrew not found, installing..."
