@@ -1,5 +1,9 @@
 # this is an initial bootstrap of a mac
 
+echo "########################################################"
+echo "#### Checking for Homebrew and adding to PATH if needed"
+echo "########################################################"
+
 # Check for Homebrew and add to PATH if needed
 if [[ ! -f "/opt/homebrew/bin/brew" ]]; then
     echo "Homebrew not found, installing..."
