@@ -11,7 +11,8 @@
         state: present
       loop:
         - colima
-        - kubectl
+        - kubernetes-cli
+        - kube-ps1
         - helm
         - kubectx
         - argocd
@@ -21,6 +22,9 @@
         - zsh-history-substring-search
         - flux
         - azure-cli
+        - mise
+        - cloudflared
+        - trivy
     - name: install casks
       become: false
       homebrew_cask:
