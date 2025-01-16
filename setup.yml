@@ -80,9 +80,26 @@
         create: true
         insertafter: "## ALIASES"
       loop:
-        - "alias kc='kubectx'"
-        - "alias kn='kubens'"
         - "alias k='kubectl'"
+        - "alias kgp='k get pod'"
+        - "alias kgs='k get service'"
+        - "alias kgsec='k get secret'"
+        - "alias kgi='k get ingress'"
+        - "alias kl='k logs'"
+        - "alias kc=kubectx"
+        - "alias kn=kubens"
+        - "alias knd='kn default'"
+        - "alias knf='kn feature-branch'"
+        - "alias kexec='kubectl exec -it'"
+        - "alias kge='kubectl get events --sort-by=.metadata.creationTimestamp'"
+        - "alias grbm='git rebase master'"
+        - "alias grh1='git reset --hard HEAD~1'"
+        - "alias grbmain='git rebase main'"
+        - "alias gcmain='git checkout main'"
+        - "alias azpr='az repos pr create --open'"
+        - 'alias az-pr-id=''az repos pr list --source-branch $(git rev-parse --abbrev-ref HEAD) | jq ".[0].codeReviewId"'''
+        - "alias azprshow='az repos pr show --id $(az-pr-id)'"
+        - "alias az-update-pr='az repos pr update --id $(az-pr-id)'"
 
     - name: Add zsh-completions to FPATH and enable compinit (must be at end of file)
       lineinfile:
@@ -95,8 +112,8 @@
         - "FPATH=$(brew --prefix)/share/zsh-completions:$FPATH"
         - "autoload -Uz compinit"
         - "compinit"
-
-
+        - 'eval "$(/opt/homebrew/bin/mise activate zsh)"'
+        - 'eval "$(/opt/homebrew/bin/brew shellenv)"'
 
     - name: Ensure colima is configured
       shell: colima start --profile rosetta --cpu 4 --memory 8 --disk 100 --arch aarch64 --vm-type=vz --vz-rosetta --mount-type virtiofs
