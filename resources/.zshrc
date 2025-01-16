@@ -12,6 +12,8 @@ plugins=(
  kube-ps1
 )PS1='%n %1~ %#'
 
+source $ZSH/oh-my-zsh.sh
+
 prompt_context() {
   if [[ "$USERNAME" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
     prompt_segment black default "%(!.%{%F{yellow}%}.)%n"
