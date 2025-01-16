@@ -22,6 +22,6 @@ defaults write com.apple.dock persistent-apps -array
 killall Dock
 
 # remove all zoom from the display and have 1:1 pixel density - by using more space for the display
-defaults write com.apple.windowserver DisplayResolutionEnabled -bool true
+defaults write com.apple.windowserver DisplayResolutionEnabled -bool false
 # restart display
 killall WindowServer
