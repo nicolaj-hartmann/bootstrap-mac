@@ -62,6 +62,41 @@
         content: "{{ lookup('file', 'resources/.zshrc') }}"
         dest: ~/.zshrc
         mode: "0644"
+    - name: Add Homebrew Zsh plugin sources to .zshrc
+      lineinfile:
+        path: ~/.zshrc
+        line: "source $HOMEBREW_PREFIX/share/{{ item }}/{{ item }}.zsh"
+        state: present
+        create: true
+      loop:
+        - zsh-autosuggestions
+        - zsh-syntax-highlighting
+        - zsh-history-substring-search
+    - name: add aliases
+      lineinfile:
+        path: ~/.zshrc
+        line: "{{ item }}"
+        state: present
+        create: true
+        insertafter: "## ALIASES"
+      loop:
+        - "alias kc='kubectx'"
+        - "alias kn='kubens'"
+        - "alias k='kubectl'"
+
+    - name: Add zsh-completions to FPATH and enable compinit (must be at end of file)
+      lineinfile:
+        path: ~/.zshrc
+        line: "{{ item }}"
+        state: present
+        insertafter: EOF
+      loop:
+        - "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh"
+        - "FPATH=$(brew --prefix)/share/zsh-completions:$FPATH"
+        - "autoload -Uz compinit"
+        - "compinit"
+
+
 
     - name: Ensure colima is configured
       shell: colima start --profile rosetta --cpu 4 --memory 8 --disk 100 --arch aarch64 --vm-type=vz --vz-rosetta --mount-type virtiofs
