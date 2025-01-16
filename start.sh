@@ -1,8 +1,14 @@
 # this is an initial bootstrap of a mac
 
-# install homebrew if it not installed yet and if installed check for of brew (not apps but brew itself)
-if ! command -v brew &> /dev/null; then
+# Check for Homebrew and add to PATH if needed
+if [[ ! -f "/opt/homebrew/bin/brew" ]] && [[ ! -f "/usr/local/bin/brew" ]]; then
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    # Add Homebrew to PATH based on chip architecture
+    if [[ $(uname -m) == "arm64" ]]; then
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+    else
+        eval "$(/usr/local/bin/brew shellenv)"
+    fi
 else
     brew update
 fi
