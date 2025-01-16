@@ -37,16 +37,15 @@
         - datagrip
         - rider
         - cursor
-  - name: isntall taps
-    community.general.homebrew_tap:
-      name: "{{ item }}"
-      state: present
-    loop:
-      - ksd
+    - name: isntall taps
+      community.general.homebrew_tap:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - ksd
 
-  - name: Ensure colima is configured
-    shell: colima start --profile rosetta --cpu 4 --memory 8 --disk 100 --arch aarch64 --vm-type=vz --vz-rosetta --mount-type virtiofs
-
+    - name: Ensure colima is configured
+      shell: colima start --profile rosetta --cpu 4 --memory 8 --disk 100 --arch aarch64 --vm-type=vz --vz-rosetta --mount-type virtiofs
 # setup colima if it is not already installed properly - something like this as default mnachine;  colima start --profile rosetta --cpu 4 --memory 7 --disk 60 --arch aarch64 --vm-type=vz --vz-rosetta --mount-type virtiofs
 # - name: Ensure colima is installed
 #   homebrew_cask:
