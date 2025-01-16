@@ -35,7 +35,7 @@
         state: present
       loop:
         - iterm2
-        - amethyst
+        - rectangle-pro
         - discord
         - expressvpn
         - flutter
@@ -120,6 +120,7 @@
         - "compinit"
         - 'eval "$(/opt/homebrew/bin/mise activate zsh)"'
         - 'eval "$(/opt/homebrew/bin/brew shellenv)"'
+        - 'cd projects'
 
     - name: Ensure colima is configured
       shell: colima start --profile rosetta --cpu 4 --memory 8 --disk 100 --arch aarch64 --vm-type=vz --vz-rosetta --mount-type virtiofs
