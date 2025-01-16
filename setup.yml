@@ -12,6 +12,7 @@
       loop:
         - colima
         - docker
+        - docker-compose
         - kubernetes-cli
         - kube-ps1
         - helm
