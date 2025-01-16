@@ -1,7 +1,11 @@
 # this is an initial bootstrap of a mac
 
-# install homebrew
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+# install homebrew if it not installed yet and if installed check for of brew (not apps but brew itself)
+if ! command -v brew &> /dev/null; then
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+else
+    brew update
+fi
 
 brew install zsh
 
