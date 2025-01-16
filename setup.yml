@@ -11,6 +11,12 @@
         state: present
       loop:
         - iterm2
+        - amethyst
+        - discord
+        - expressvpn
+        - flutter
+        - spotify
+        - vlc
 # setup colima if it is not already installed properly - something like this as default mnachine;  colima start --profile rosetta --cpu 4 --memory 7 --disk 60 --arch aarch64 --vm-type=vz --vz-rosetta --mount-type virtiofs
 # - name: Ensure colima is installed
 #   homebrew_cask:
