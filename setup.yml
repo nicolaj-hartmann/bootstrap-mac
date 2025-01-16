@@ -6,9 +6,8 @@
   become: true
   tasks:
     - name: "Run this task before homebrew_cask module, so that sudo cache gets refreshed."
-    command: "echo none"
-    become: yes
-  tasks:
+      command: "echo none"
+      become: yes
     - name: Ensure Homebrew casks are installed
       homebrew:
         name: "{{ item }}"
