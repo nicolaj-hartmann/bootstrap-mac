@@ -16,12 +16,19 @@ fi
 
 brew install zsh
 
+# Only add Homebrew to PATH in .zshrc if not already present
+if ! grep -q 'eval "$(/opt/homebrew/bin/brew shellenv)"' ~/.zshrc; then
+    echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zshrc
+    echo "Added Homebrew to PATH in .zshrc"
+else
+    echo "Homebrew already in PATH in .zshrc"
+fi
+
 # remove all shortcuts in the dock
 defaults write com.apple.dock persistent-apps -array
 # restart dock
 killall Dock
 
-# remove all zoom from the display and have 1:1 pixel density - by using more space for the display
-defaults write com.apple.windowserver DisplayResolutionEnabled -bool false
-# restart display
-killall WindowServer
+echo "########################################################"
+echo "#### Done"
+echo "########################################################"
