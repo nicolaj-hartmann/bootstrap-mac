@@ -84,8 +84,19 @@ prompt_git() {
 prompt_dir() {
   prompt_segment '235' white '%~'
 }
+build_prompt() {
+  RETVAL=$?
+  prompt_status
+  prompt_virtualenv
+  #prompt_context
+  prompt_kubectx
+  prompt_dir
+  prompt_git
+  prompt_end
+}
 
 PROMPT='%{%f%b%k%}$(build_prompt) '
+
 
 
 
