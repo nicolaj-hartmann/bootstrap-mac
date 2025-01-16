@@ -1,6 +1,7 @@
 ---
 - name: Configure MacBook with Ansible
   hosts: localhost
+  gather_facts: false
 
   become: true
   tasks:
