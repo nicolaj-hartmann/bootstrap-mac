@@ -2,14 +2,11 @@
 
 # Check for Homebrew and add to PATH if needed
 if [[ ! -f "/opt/homebrew/bin/brew" ]]; then
+    echo "Homebrew not found, installing..."
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    # Add Homebrew to PATH based on chip architecture
-    if [[ $(uname -m) == "arm64" ]]; then
-        eval "$(/opt/homebrew/bin/brew shellenv)"
-    else
-        eval "$(/usr/local/bin/brew shellenv)"
-    fi
+    eval "$(/opt/homebrew/bin/brew shellenv)"
 else
+    echo "Homebrew found, updating..."
     brew update
 fi
 
