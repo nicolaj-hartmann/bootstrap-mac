@@ -1,6 +1,7 @@
 ---
 - name: Configure MacBook with Ansible
   hosts: localhost
+  gather_facts: false
   become: true
   tasks:
     - name: Ensure Homebrew casks are installed
@@ -9,3 +10,11 @@
         state: present
       loop:
         - iterm2
+# setup colima if it is not already installed properly - something like this as default mnachine;  colima start --profile rosetta --cpu 4 --memory 7 --disk 60 --arch aarch64 --vm-type=vz --vz-rosetta --mount-type virtiofs
+# - name: Ensure colima is installed
+#   homebrew_cask:
+#     name: colima
+#     state: present
+
+# - name: Ensure colima is configured
+#   shell: colima start --profile rosetta --cpu 4 --memory 7 --disk 60 --arch aarch64 --vm-type=vz --vz-rosetta --mount-type virtiofs
