@@ -153,7 +153,8 @@ alias pycharm='open -a "Pycharm.app"'
 alias py='pycharm .'
 
 alias goland='open -a "GoLand.app"'
-alias rconf='code ~/.zshrc'
+alias rconf='cursor ~/.zshrc'
+alias rconfbootstrap='cursor  ~/bootstrap-mac"
 alias z="cd .."
 alias zhome="cd ~"
 alias zproj="cd ~/projects"
@@ -165,5 +166,5 @@ alias kdebug="kubectl run -i --tty --rm debug --image=nicolaka/netshoot --restar
 alias kevicdel='kubectl get pods --all-namespaces --field-selector=status.phase=Failed | grep Evicted | awk "{print \$2}" | xargs kubectl delete pod'
 
 eval "$(/opt/homebrew/bin/brew shellenv)"
-alias confsync='(cd ~/bootstrap-mac || git clone https://github.com/nicolaj-hartmann/bootstrap-mac.git ~/bootstrap-mac) && cd ~/bootstrap-mac && git pull && ansible-playbook setup.yml'
+alias confsync='(cd ~/bootstrap-mac || git clone git@github.com:nicolaj-hartmann/bootstrap-mac.git ~/bootstrap-mac) && cd ~/bootstrap-mac && git pull && ansible-playbook setup.yml'
 
