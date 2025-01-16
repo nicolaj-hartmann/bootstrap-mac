@@ -11,6 +11,7 @@
         state: present
       loop:
         - colima
+        - docker
         - kubernetes-cli
         - kube-ps1
         - helm
