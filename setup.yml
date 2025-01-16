@@ -2,12 +2,14 @@
 - name: Configure MacBook with Ansible
   hosts: localhost
   gather_facts: false
-
-  become: true
+  become: false
   tasks:
-    - name: "Run this task before homebrew_cask module, so that sudo cache gets refreshed."
-      command: "echo none"
-      become: yes
+    - name: ffmpeg is present (brew)
+      when: ansible_pkg_mgr == 'brew'
+      homebrew:
+        name: iterm2
+        state: present
+
     - name: Ensure Homebrew casks are installed
       ansible.builtin.shell: "brew install --cask {{ item }}"
       loop:
