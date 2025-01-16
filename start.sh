@@ -29,6 +29,9 @@ defaults write com.apple.dock persistent-apps -array
 # restart dock
 killall Dock
 
+echo "install ansible if not installed yet"
+brew install ansible
+
 echo "########################################################"
 echo "#### Done"
 echo "########################################################"
