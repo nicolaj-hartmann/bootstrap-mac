@@ -1,7 +1,5 @@
 
 export ZSH="$HOME/.oh-my-zsh"
-export PATH="$HOME/.cargo/bin:$PATH"
-fpath=(/opt/homebrew/share/zsh/site-functions /opt/homebrew/share/zsh-completions $fpath)
 
 ZSH_THEME="agnoster"
 
