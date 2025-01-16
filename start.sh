@@ -32,7 +32,7 @@ defaults write com.apple.dock persistent-apps -array
 killall Dock
 
 #delete garage band, freeform, imovie, pages, numbers, keynote But only do it if they dont exists so may make a list of app filenames to be deleted
-apps_to_delete=("GarageBand" "Freeform" "iMovie" "Pages" "Numbers" "Keynote")   
+apps_to_delete=("GarageBand" "Freeform" "iMovie" "Pages" "Numbers" "Keynote", "Chess")   
 for app in "${apps_to_delete[@]}"; do
     if [[ -d "/Applications/$app.app" ]]; then
         echo "Deleting $app"
