@@ -28,7 +28,7 @@ fi
 
 # Add confsync alias to .zshrc
 if ! grep -q "alias confsync=" ~/.zshrc; then
-    echo "alias confsync='(cd ~/bootstrap-mac || git clone https://github.com/nicolaj-hartmann/bootstrap-mac.git ~/bootstrap-mac && cd ~/bootstrap-mac) && git pull && ansible-playbook setup.yml'" >> ~/.zshrc
+    echo "alias confsync='(cd ~/bootstrap-mac || git clone git@github.com:nicolaj-hartmann/bootstrap-mac.git ~/bootstrap-mac) && cd ~/bootstrap-mac && git pull && ansible-playbook setup.yml'" >> ~/.zshrc
     echo "Added confsync alias to .zshrc"
 else
     echo "confsync alias already present in .zshrc"
