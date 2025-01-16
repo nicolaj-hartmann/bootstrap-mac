@@ -3,13 +3,23 @@ export ZSH="$HOME/.oh-my-zsh"
 
 ZSH_THEME="agnoster"
 
+setopt extended_glob
+typeset -gU path
+
 plugins=(
  git
- zsh-syntax-highlighting
- zsh-autosuggestions
- zsh-completions
  kube-ps1
 )PS1='%n %1~ %#'
+
+# Source any plugins installed via homebrew if found. instead of the old way above
+: ${HOMEBREW_PREFIX:=$(brew --prefix 2>/dev/null)}
+zsh_plugins=(
+  $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh(N)
+  $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh(N)
+  $HOMEBREW_PREFIX/share/zsh-completions/zsh-completions.zsh(N)
+)
+for zfile in $zsh_plugins; source $zfile
+unset zsh_plugins zfile
 
 source $ZSH/oh-my-zsh.sh
 
