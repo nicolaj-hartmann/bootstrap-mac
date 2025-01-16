@@ -31,7 +31,13 @@ defaults write com.apple.dock persistent-apps -array
 # restart dock
 killall Dock
 
-
+#delete garage band, freeform, imovie, pages, numbers, keynote
+sudo rm -rf /Applications/GarageBand.app
+sudo rm -rf /Applications/Freeform.app
+sudo rm -rf /Applications/iMovie.app
+sudo rm -rf /Applications/Pages.app
+sudo rm -rf /Applications/Numbers.app
+sudo rm -rf /Applications/Keynote.app
 
 echo "########################################################"
 echo "#### Done"
