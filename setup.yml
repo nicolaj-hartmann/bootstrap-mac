@@ -100,6 +100,11 @@
         - 'alias az-pr-id=''az repos pr list --source-branch $(git rev-parse --abbrev-ref HEAD) | jq ".[0].codeReviewId"'''
         - "alias azprshow='az repos pr show --id $(az-pr-id)'"
         - "alias az-update-pr='az repos pr update --id $(az-pr-id)'"
+        - 'alias rider=''open -a "Rider.app"'''
+        - 'alias pycharm=''open -a "Pycharm.app"'''
+        - "alias py='pycharm .'"
+        - 'alias ghpr="gh pr create --fill && gh pr view --web"'
+        - 'alias kdebug="kubectl run -i --tty --rm debug --image=nicolaka/netshoot --restart=Never -- sh"'
 
     - name: Add zsh-completions to FPATH and enable compinit (must be at end of file)
       lineinfile:
