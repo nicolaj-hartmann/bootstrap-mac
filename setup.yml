@@ -41,12 +41,16 @@
         - datagrip
         - rider
         - cursor
-    - name: isntall taps
-      community.general.homebrew_tap:
-        name: "{{ item }}"
+
+    - name: Ensure the Homebrew tap is added
+      homebrew_tap:
+        name: mfuentesg/tap
         state: present
-      loop:
-        - mfuentesg/tap/ksd
+
+    - name: Install ksd from mfuentesg/tap
+      homebrew:
+        name: mfuentesg/tap/ksd
+        state: present
 
     - name: Ensure colima is configured
       shell: colima start --profile rosetta --cpu 4 --memory 8 --disk 100 --arch aarch64 --vm-type=vz --vz-rosetta --mount-type virtiofs
