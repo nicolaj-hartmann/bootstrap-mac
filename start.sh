@@ -48,6 +48,9 @@ for app in "${apps_to_delete[@]}"; do
     fi
 done
 
+# install oh my zsh
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+echo "oh my zsh installed"
 
 echo "########################################################"
 echo "#### Done"
