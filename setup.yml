@@ -42,6 +42,7 @@
         - datagrip
         - rider
         - cursor
+        - arc
 
     - name: Ensure the Homebrew tap is added
       homebrew_tap:
