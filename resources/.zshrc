@@ -154,7 +154,7 @@ alias py='pycharm .'
 
 alias goland='open -a "GoLand.app"'
 alias rconf='cursor ~/.zshrc'
-alias rconfbootstrap='cursor  ~/bootstrap-mac"
+alias rconfbootstrap='cursor  ~/bootstrap-mac'
 alias z="cd .."
 alias zhome="cd ~"
 alias zproj="cd ~/projects"
