@@ -14,7 +14,9 @@ else
     brew update
 fi
 
-brew install zsh
+brew install \
+    zsh \
+    ansible \
 
 # Only add Homebrew to PATH in .zshrc if not already present
 if ! grep -q 'eval "$(/opt/homebrew/bin/brew shellenv)"' ~/.zshrc; then
@@ -29,8 +31,7 @@ defaults write com.apple.dock persistent-apps -array
 # restart dock
 killall Dock
 
-echo "install ansible if not installed yet"
-brew install ansible
+
 
 echo "########################################################"
 echo "#### Done"
