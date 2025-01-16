@@ -5,7 +5,6 @@
   become: false
   tasks:
     - name: ffmpeg is present (brew)
-      when: ansible_pkg_mgr == 'brew'
       homebrew:
         name: iterm2
         state: present
