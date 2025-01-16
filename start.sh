@@ -35,6 +35,7 @@ killall Dock
 apps_to_delete=("GarageBand" "Freeform" "iMovie" "Pages" "Numbers" "Keynote")   
 for app in "${apps_to_delete[@]}"; do
     if [[ -d "/Applications/$app.app" ]]; then
+        echo "Deleting $app"
         sudo rm -rf "/Applications/$app.app"
     fi
 done
