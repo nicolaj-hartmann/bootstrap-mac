@@ -27,6 +27,7 @@
         - mise
         - cloudflared
         - trivy
+        - powerlevel10k
     - name: install casks
       become: false
       homebrew_cask:

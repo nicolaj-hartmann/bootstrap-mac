@@ -1,11 +1,27 @@
 # this is an initial bootstrap of a mac
 
+ensure_line_in_file() {
+  local line="$1"
+  local file="$2"
+  local prepend="$3"
+
+  if ! grep -Fxq "$line" "$file"; then
+    if [ "$prepend" = "true" ]; then
+      sudo sed -i.bak "1s|^|$line\n|" "$file"
+    else
+      echo "$line" | sudo tee -a "$file" > /dev/null
+    fi
+  fi
+}
+
+
+
 echo "########################################################"
 echo "#### Checking for Homebrew and adding to PATH if needed"
 echo "########################################################"
 
 echo "Adding touchId sudo support"
-sudo grep -Fxq "auth sufficient pam_tid.so" /etc/pam.d/sudo || sudo sed -i.bak '1s/^/auth sufficient pam_tid.so\n/' /etc/pam.d/sudo
+ensure_line_in_file "auth sufficient pam_tid.so" "/etc/pam.d/sudo" true
 
 # Check for Homebrew and add to PATH if needed
 if [[ ! -f "/opt/homebrew/bin/brew" ]]; then
@@ -37,6 +53,10 @@ else
     echo "confsync alias already present in .zshrc"
 fi
 
+# install oh my zsh
+[ ! -d "$HOME/.oh-my-zsh" ] && sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+ensure_line_in_file "source $HOMEBREW_PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme" "$HOME/.zshrc" false
+
 # remove all shortcuts in the dock
 defaults write com.apple.dock persistent-apps -array
 # restart dock
@@ -51,9 +71,7 @@ for app in "${apps_to_delete[@]}"; do
     fi
 done
 
-# install oh my zsh
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-echo "oh my zsh installed"
+
 
 echo "########################################################"
 echo "#### Done"
