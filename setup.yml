@@ -45,6 +45,9 @@
         - rider
         - cursor
         - arc
+        - microsoft-office
+        - microsoft-teams
+        - slack
 
     - name: Ensure the Homebrew tap is added
       homebrew_tap:
