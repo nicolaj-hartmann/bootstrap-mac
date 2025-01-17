@@ -44,6 +44,9 @@ else
     brew update
 fi
 
+echo "Installing Rosetta 2"
+/usr/sbin/softwareupdate --install-rosetta --agree-to-license
+
 brew install \
     zsh \
     ansible \
