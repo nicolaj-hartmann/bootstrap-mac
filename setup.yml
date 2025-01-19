@@ -48,6 +48,7 @@
         - microsoft-office
         - microsoft-teams
         - slack
+        - chatgpt
 
     - name: Ensure the Homebrew tap is added
       homebrew_tap:
