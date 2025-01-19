@@ -49,6 +49,7 @@
         - microsoft-teams
         - slack
         - chatgpt
+        - teamviewer
 
     - name: Ensure the Homebrew tap is added
       homebrew_tap:
