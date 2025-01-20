@@ -28,6 +28,7 @@
         - cloudflared
         - trivy
         - powerlevel10k
+        - dnsmasq
     - name: install casks
       become: false
       homebrew_cask:
@@ -51,6 +52,7 @@
         - chatgpt
         - teamviewer
         - orcaslicer
+        - contexts
 
     - name: Ensure the Homebrew tap is added
       homebrew_tap:
@@ -132,3 +134,33 @@
       shell: colima start --profile rosetta --cpu 4 --memory 8 --disk 100 --arch aarch64 --vm-type=vz --vz-rosetta --mount-type virtiofs
     - name: Add Kubectl autocomplete to zsh
       shell: kubectl completion zsh > /opt/homebrew/etc/bash_completion.d/kubectx
+    - name: Create dnsmasq config directory
+      file:
+        path: "{{ lookup('pipe', 'brew --prefix') }}/etc"
+        state: directory
+
+    - name: Configure dnsmasq for *.test domains
+      lineinfile:
+        path: "{{ lookup('pipe', 'brew --prefix') }}/etc/dnsmasq.conf"
+        line: "{{ item }}"
+        create: true
+      loop:
+        - "address=/.test/127.0.0.1"
+        - "port=53"
+
+    - name: Ensure dnsmasq autostarts and is running
+      command: sudo brew services start dnsmasq
+      args:
+        creates: "/Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist"
+
+    - name: Create resolver directory
+      become: true    
+      file:
+        path: /etc/resolver
+        state: directory
+        mode: '0755'
+    - name: Add nameserver to resolver for *.test domains
+      copy:
+        dest: /etc/resolver/test
+        content: |
+          nameserver 127.0.0.1
