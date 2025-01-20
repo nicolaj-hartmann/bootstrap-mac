@@ -29,6 +29,7 @@
         - trivy
         - powerlevel10k
         - dnsmasq
+        - gh
     - name: install casks
       become: false
       homebrew_cask:
@@ -137,7 +138,6 @@
       file:
         path: "{{ lookup('pipe', 'brew --prefix') }}/etc"
         state: directory
-
     - name: Configure dnsmasq for *.test domains
       lineinfile:
         path: "{{ lookup('pipe', 'brew --prefix') }}/etc/dnsmasq.conf"
@@ -146,20 +146,18 @@
       loop:
         - "address=/.test/127.0.0.1"
         - "port=53"
-
+        - "address=/masterdata.bunker-holding.com/127.0.0.1"
+        - "address=/.sat-p-masterdata.azure.comp-host.com/127.0.0.1"
+        - "address=/.sat-s-masterdata.azure.comp-host.com/127.0.0.1"
+        - "server=1.1.1.1"
     - name: Ensure dnsmasq autostarts and is running
-      command: sudo brew services start dnsmasq
+      command: brew services start dnsmasq
       args:
         creates: "/Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist"
-
-    - name: Create resolver directory
-      become: true    
-      file:
-        path: /etc/resolver
-        state: directory
-        mode: '0755'
-    - name: Add nameserver to resolver for *.test domains
-      copy:
-        dest: /etc/resolver/test
-        content: |
-          nameserver 127.0.0.1
+    - name: Restart dnsmasq if resolver files changed
+      command: brew services restart dnsmasq
+    - name: Configure DNS to use local resolver first
+      shell: |
+        networksetup -listallnetworkservices | grep -v "An asterisk" | while read -r service; do
+          networksetup -setdnsservers "$service" 127.0.0.1
+        done
