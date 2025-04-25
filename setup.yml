@@ -30,6 +30,7 @@
         - powerlevel10k
         - dnsmasq
         - gh
+        - opentofu
     - name: install casks
       become: false
       homebrew_cask:
@@ -53,6 +54,10 @@
         - chatgpt
         - teamviewer
         - orcaslicer
+        - obs
+        - wifiman
+        - proton-drive
+        - proton-mail
 
     - name: Ensure the Homebrew tap is added
       homebrew_tap:
@@ -149,6 +154,7 @@
         - "address=/masterdata.bunker-holding.com/127.0.0.1"
         - "address=/.sat-p-masterdata.azure.comp-host.com/127.0.0.1"
         - "address=/.sat-s-masterdata.azure.comp-host.com/127.0.0.1"
+        - "address=/.bop-t.azure.comp-host.com/127.0.0.1"
         - "server=1.1.1.1"
     - name: Ensure dnsmasq autostarts and is running
       command: brew services start dnsmasq

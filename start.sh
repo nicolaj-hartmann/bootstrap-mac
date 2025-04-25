@@ -61,7 +61,7 @@ fi
 
 # Simplified confsync alias
 if ! grep -q "alias confsync=" ~/.zshrc; then
-    echo "alias confsync='cd $REPO_PATH && git pull && ansible-playbook setup.yml'" >> ~/.zshrc
+    echo "alias confsync='cd $REPO_PATH && git pull && ansible-playbook setup.yml --ask-become-pass'" >> ~/.zshrc
     echo "Added confsync alias to .zshrc"
 else
     echo "confsync alias already present in .zshrc"
