@@ -145,6 +145,7 @@
     brewfile: /tmp/bootstrap-Brewfile
     docker_config: "{{ home }}/.docker/config.json"
     agent: "{{ home }}/Library/LaunchAgents/com.nicolaj.bootstrap-update.plist"
+    log: "{{ home }}/Library/Logs/bootstrap-mac.log"
   vars_files:
     - aliases.yml
   environment:
@@ -257,12 +258,16 @@
       changed_when: false
 
     - name: Install packages
-      command: brew bundle --file={{ brewfile }}
+      shell: set -o pipefail; brew bundle --verbose --file={{ brewfile }} 2>&1 | tee -a {{ log }}
+      args:
+        executable: /bin/bash
       register: bundle
       changed_when: "'Installing' in bundle.stdout or 'Upgrading' in bundle.stdout"
 
     - name: Remove packages not in the lists
-      command: brew bundle cleanup --force --file={{ brewfile }}
+      shell: set -o pipefail; brew bundle cleanup --force --file={{ brewfile }} 2>&1 | tee -a {{ log }}
+      args:
+        executable: /bin/bash
       register: cleanup
       changed_when: "'Uninstall' in cleanup.stdout"
       failed_when: false
@@ -281,12 +286,16 @@
       changed_when: false
 
     - name: Upgrade formulae
-      command: brew upgrade --formula
+      shell: set -o pipefail; brew upgrade --formula 2>&1 | tee -a {{ log }}
+      args:
+        executable: /bin/bash
       register: upgrade
       changed_when: "'Upgrading' in upgrade.stdout"
 
     - name: Upgrade casks
-      command: brew upgrade --cask
+      shell: set -o pipefail; brew upgrade --cask 2>&1 | tee -a {{ log }}
+      args:
+        executable: /bin/bash
       register: cask_upgrade
       changed_when: "'Upgrading' in cask_upgrade.stdout"
       failed_when: false
@@ -318,9 +327,11 @@
       changed_when: false
 
     - name: Install mise tools
-      command: mise install
+      shell: set -o pipefail; mise install 2>&1 | tee -a {{ log }}
+      args:
+        executable: /bin/bash
       register: mise_install
-      changed_when: "'all tools are installed' not in mise_install.stderr"
+      changed_when: "'all tools are installed' not in mise_install.stdout"
 
     - name: Remove mise tools not in any config
       command: mise prune --yes
