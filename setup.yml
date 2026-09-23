@@ -167,7 +167,6 @@
       tags: system
       environment:
         HOMEBREW_CACHE: "{{ home }}/Library/Caches/Homebrew"
-        HOMEBREW_NO_AUTO_UPDATE: "1"
       block:
         - name: Enable Touch ID for sudo
           copy:
@@ -213,7 +212,7 @@
         - name: Start dnsmasq at boot
           command: brew services start dnsmasq
           args:
-            creates: /Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist
+            creates: /Library/LaunchDaemons/sh.brew.dnsmasq.plist
 
         - name: Restart dnsmasq
           command: brew services restart dnsmasq
