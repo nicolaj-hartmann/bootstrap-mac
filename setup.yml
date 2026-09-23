@@ -156,7 +156,7 @@
       include_vars:
         file: setup.local.yml
         name: local
-      when: lookup('first_found', ['setup.local.yml'], errors='ignore')
+      when: (playbook_dir ~ '/setup.local.yml') is file
 
     - name: Update Homebrew
       command: brew update -q
