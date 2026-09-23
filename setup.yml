@@ -317,7 +317,7 @@
         dest: "{{ php_ini_dir.stdout }}/99-xdebug.ini"
         content: |
           xdebug.mode=debug
-          xdebug.start_with_request=trigger
+          xdebug.start_with_request=yes
           xdebug.client_host=127.0.0.1
           xdebug.client_port=9003
           xdebug.log_level=0
