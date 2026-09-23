@@ -158,6 +158,10 @@
         name: local
       when: lookup('first_found', ['setup.local.yml'], errors='ignore')
 
+    - name: Update Homebrew
+      command: brew update -q
+      changed_when: false
+
     - name: System setup
       become: true
       tags: system
@@ -237,10 +241,6 @@
           {% for c in casks + local.casks | default([]) %}
           cask "{{ c }}"
           {% endfor %}
-      changed_when: false
-
-    - name: Update Homebrew
-      command: brew update -q
       changed_when: false
 
     - name: Turn off Homebrew analytics
