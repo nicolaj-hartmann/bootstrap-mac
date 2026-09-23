@@ -52,7 +52,6 @@
       - mysql-client
       - nmap
       - ollama
-      - open-banking-io/tap/obank
       - open-banking-io/tap/openbanking
       - opencode
       - openstackclient
