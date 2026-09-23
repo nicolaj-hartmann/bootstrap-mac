@@ -1,0 +1,33 @@
+name: bump
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * 1'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      HOLD: kubectl
+    steps:
+      - uses: actions/checkout@v7
+      - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+        with:
+          install: false
+      - run: mise install && mise upgrade --bump $(python3 -c 'import os, tomllib; print(" ".join(t for t in tomllib.load(open("mise.toml", "rb"))["tools"] if t not in os.environ["HOLD"].split()))')
+      - run: |
+          git diff --quiet && exit 0
+          git config user.name github-actions
+          git config user.email github-actions[bot]@users.noreply.github.com
+          git checkout -B bump-tools
+          git commit -am "Bump tools"
+          git push -f origin bump-tools
+          if [ "$(gh pr list --head bump-tools --state open --json number --jq length)" = 0 ]; then gh pr create --fill --head bump-tools; fi
+        env:
+          GH_TOKEN: ${{ secrets.BUMP_TOKEN || github.token }}

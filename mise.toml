@@ -1,0 +1,11 @@
+[tools]
+helm = "4.3.0"
+kubectl = "1.37.0"
+kubectx = "0.11.0"
+kubens = "0.11.0"
+kubeseal = "0.40.0"
+kustomize = "5.8.1"
+opentofu = "1.12.6"
+trivy = "0.74.0"
+"github:mfuentesg/ksd" = "1.0.14"
+"github:composer/composer" = { version = "2.10.3", exe = "composer.phar", rename_exe = "composer" }

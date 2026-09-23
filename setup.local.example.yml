@@ -1,0 +1,5 @@
+packages:
+  - fzf
+casks:
+  - visual-studio-code
+  - slack

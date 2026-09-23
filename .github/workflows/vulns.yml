@@ -1,0 +1,21 @@
+name: vulns
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 7 * * 1'
+
+jobs:
+  brew-vulns:
+    runs-on: macos-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - run: brew update -q
+      - run: |
+          for t in $(ruby -ryaml -e 'puts YAML.load_file("setup.yml")[0]["vars"]["taps"]'); do brew tap "$t" && brew trust "$t"; done
+          ruby -ryaml -e 'YAML.load_file("setup.yml")[0]["vars"]["packages"].each { |p| puts %(brew "#{p.is_a?(Hash) ? p["name"] : p}") }' > Brewfile
+      - run: brew vulns --brewfile=Brewfile --severity high --fix-available

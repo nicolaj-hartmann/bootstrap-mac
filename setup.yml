@@ -1,169 +1,414 @@
----
-- name: Configure MacBook with Ansible
-  hosts: localhost
+- hosts: localhost
   gather_facts: false
-  become: false
+  vars:
+    packages:
+      - actionlint
+      - age
+      - ansible
+      - apktool
+      - argocd
+      - automake
+      - awscli
+      - azure-cli
+      - binutils
+      - bitwarden-cli
+      - cairo
+      - cilium-cli
+      - cloudflared
+      - cmake
+      - cocoapods
+      - colima
+      - contentful-cli
+      - coreutils
+      - dnsmasq
+      - docker
+      - docker-buildx
+      - docker-compose
+      - fastlane
+      - ffmpeg
+      - firebase-cli
+      - gemini-cli
+      - gh
+      - gitleaks
+      - gnu-sed
+      - golangci-lint
+      - goreleaser
+      - gpac
+      - graphviz
+      - hcloud
+      - hugo
+      - jadx
+      - k3d
+      - kube-ps1
+      - kubebuilder
+      - libtool
+      - livekit-cli
+      - lld
+      - lua@5.4
+      - luarocks
+      - maven
+      - mise
+      - mobile-dev-inc/tap/maestro
+      - mysql-client
+      - nmap
+      - ollama
+      - open-banking-io/tap/obank
+      - open-banking-io/tap/openbanking
+      - opencode
+      - openstackclient
+      - p7zip
+      - packer
+      - php
+      - pi-coding-agent
+      - pkgconf
+      - podman
+      - poppler
+      - powerlevel10k
+      - probe-rs-tools
+      - qemu
+      - rpm
+      - semgrep
+      - structurizr-cli
+      - switchaudio-osx
+      - tea
+      - telnet
+      - tesseract
+      - vfkit
+      - wget
+      - xcodegen
+      - youssofal/mtplx/mtplx
+      - yt-dlp
+      - zoxide
+      - zsh
+      - zsh-autosuggestions
+      - zsh-completions
+      - zsh-history-substring-search
+      - zsh-syntax-highlighting
+    taps:
+      - mobile-dev-inc/tap
+      - open-banking-io/tap
+      - youssofal/mtplx
+    casks:
+      - android-commandlinetools
+      - antigravity
+      - anythingllm
+      - arc
+      - background-music
+      - blender
+      - calibre
+      - charles
+      - chatgpt
+      - claude
+      - claude-code
+      - datagrip
+      - dotnet-sdk
+      - element
+      - flutter
+      - font-montserrat
+      - gcloud-cli
+      - godot
+      - goland
+      - google-chrome
+      - iterm2
+      - microsoft-edge
+      - microsoft-office
+      - microsoft-teams
+      - notion
+      - nrfutil
+      - obs
+      - orcaslicer
+      - owncloud
+      - postman
+      - proton-drive
+      - proton-mail
+      - proton-mail-bridge
+      - protonvpn
+      - rectangle-pro
+      - rider
+      - rustdesk
+      - segger-jlink
+      - slack
+      - spotify
+      - teamviewer
+      - temurin
+      - temurin@17
+      - temurin@21
+      - thunderbird
+      - visual-studio-code
+      - vlc
+      - vscodium
+      - wifiman
+      - zen
+    arch: "{{ lookup('pipe', 'uname -m') }}"
+    home: "{{ lookup('env', 'HOME') }}"
+    brew_prefix: "{{ '/opt/homebrew' if arch == 'arm64' else '/usr/local' }}"
+    brewfile: /tmp/bootstrap-Brewfile
+    docker_config: "{{ home }}/.docker/config.json"
+    agent: "{{ home }}/Library/LaunchAgents/com.nicolaj.bootstrap-update.plist"
+  vars_files:
+    - aliases.yml
+  environment:
+    PATH: "{{ home }}/.local/share/mise/shims:{{ brew_prefix }}/bin:{{ lookup('env', 'PATH') }}"
+    HOMEBREW_NO_INSTALL_CLEANUP: "1"
+    MISE_GITHUB_TOKEN: "{{ lookup('pipe', 'gh auth token', errors='ignore') }}"
   tasks:
-    - name: install brew packages
-      become: false
-      homebrew:
-        name: "{{ item }}"
-        state: present
-      loop:
-        - colima
-        - docker
-        - docker-compose
-        - kubernetes-cli
-        - kube-ps1
-        - helm
-        - kubectx
-        - argocd
-        - zsh-autosuggestions
-        - zsh-syntax-highlighting
-        - zsh-completions
-        - zsh-history-substring-search
-        - flux
-        - azure-cli
-        - mise
-        - cloudflared
-        - trivy
-        - powerlevel10k
-        - dnsmasq
-        - gh
-        - opentofu
-    - name: install casks
-      become: false
-      homebrew_cask:
-        name: "{{ item }}"
-        state: present
-      loop:
-        - iterm2
-        - rectangle-pro
-        - discord
-        - expressvpn
-        - flutter
-        - spotify
-        - vlc
-        - datagrip
-        - rider
-        - cursor
-        - arc
-        - microsoft-office
-        - microsoft-teams
-        - slack
-        - chatgpt
-        - teamviewer
-        - orcaslicer
-        - obs
-        - wifiman
-        - proton-drive
-        - proton-mail
+    - name: Load setup.local.yml
+      include_vars:
+        file: setup.local.yml
+        name: local
+      when: lookup('first_found', ['setup.local.yml'], errors='ignore')
 
-    - name: Ensure the Homebrew tap is added
-      homebrew_tap:
-        name: mfuentesg/tap
-        state: present
+    - name: System setup
+      become: true
+      tags: system
+      block:
+        - name: Enable Touch ID for sudo
+          copy:
+            dest: /etc/pam.d/sudo_local
+            content: "auth       sufficient     pam_tid.so\n"
 
-    - name: Install ksd from mfuentesg/tap
-      homebrew:
-        name: mfuentesg/tap/ksd
-        state: present
+        - name: Remove bundled Apple apps
+          file:
+            path: "/Applications/{{ item }}.app"
+            state: absent
+          loop: [GarageBand, Freeform, iMovie, Pages, Numbers, Keynote, Chess]
 
-    - name: sync zshrc
-      become: false
+        - name: Remove GarageBand libraries
+          file:
+            path: "{{ item }}"
+            state: absent
+          loop:
+            - /Library/Application Support/GarageBand
+            - /Library/Audio/Apple Loops
+
+        - name: Install Rosetta
+          command: softwareupdate --install-rosetta --agree-to-license
+          args:
+            creates: /Library/Apple/usr/share/rosetta/rosetta
+          when: arch == 'arm64'
+
+        - name: Configure dnsmasq for .test domains
+          lineinfile:
+            path: "{{ brew_prefix }}/etc/dnsmasq.conf"
+            line: "{{ item }}"
+            create: true
+          loop:
+            - address=/.test/127.0.0.1
+            - port=53
+            - address=/masterdata.bunker-holding.com/127.0.0.1
+            - address=/.sat-p-masterdata.azure.comp-host.com/127.0.0.1
+            - address=/.sat-s-masterdata.azure.comp-host.com/127.0.0.1
+            - address=/.bop-t.azure.comp-host.com/127.0.0.1
+            - address=/.bop-p.azure.comp-host.com/127.0.0.1
+            - server=1.1.1.1
+          register: dnsmasq_conf
+
+        - name: Start dnsmasq at boot
+          command: brew services start dnsmasq
+          args:
+            creates: /Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist
+
+        - name: Restart dnsmasq
+          command: brew services restart dnsmasq
+          when: dnsmasq_conf.changed
+
+        - name: Use the local resolver first
+          shell: |
+            networksetup -listallnetworkservices | grep -v "An asterisk" | while read -r service; do
+              networksetup -setdnsservers "$service" 127.0.0.1
+            done
+          changed_when: false
+
+    - name: Clear the dock once
+      shell: defaults write com.apple.dock persistent-apps -array && defaults write com.apple.dock bootstrap-cleared -bool true && killall Dock
+      when: lookup('pipe', 'defaults read com.apple.dock bootstrap-cleared 2>/dev/null || true') != '1'
+      tags: system
+
+    - name: Write Brewfile
       copy:
-        content: "{{ lookup('file', 'resources/.zshrc') }}"
-        dest: ~/.zshrc
-        mode: "0644"
-    - name: Add Homebrew Zsh plugin sources to .zshrc
-      lineinfile:
-        path: ~/.zshrc
-        line: "source $HOMEBREW_PREFIX/share/{{ item }}/{{ item }}.zsh"
-        state: present
-        create: true
-      loop:
-        - zsh-autosuggestions
-        - zsh-syntax-highlighting
-        - zsh-history-substring-search
-    - name: add aliases
-      lineinfile:
-        path: ~/.zshrc
-        line: "{{ item }}"
-        state: present
-        create: true
-        insertafter: "## ALIASES"
-      loop:
-        - "alias k='kubectl'"
-        - "alias kgp='k get pod'"
-        - "alias kgs='k get service'"
-        - "alias kgsec='k get secret'"
-        - "alias kgi='k get ingress'"
-        - "alias kl='k logs'"
-        - "alias kc=kubectx"
-        - "alias kn=kubens"
-        - "alias knd='kn default'"
-        - "alias knf='kn feature-branch'"
-        - "alias kexec='kubectl exec -it'"
-        - "alias kge='kubectl get events --sort-by=.metadata.creationTimestamp'"
-        - "alias grbm='git rebase master'"
-        - "alias grh1='git reset --hard HEAD~1'"
-        - "alias grbmain='git rebase main'"
-        - "alias gcmain='git checkout main'"
-        - "alias azpr='az repos pr create --open'"
-        - 'alias az-pr-id=''az repos pr list --source-branch $(git rev-parse --abbrev-ref HEAD) | jq ".[0].codeReviewId"'''
-        - "alias azprshow='az repos pr show --id $(az-pr-id)'"
-        - "alias az-update-pr='az repos pr update --id $(az-pr-id)'"
-        - 'alias rider=''open -a "Rider.app"'''
-        - 'alias pycharm=''open -a "Pycharm.app"'''
-        - "alias py='pycharm .'"
-        - 'alias ghpr="gh pr create --fill && gh pr view --web"'
-        - 'alias kdebug="kubectl run -i --tty --rm debug --image=nicolaka/netshoot --restart=Never -- sh"'
-        - "alias l='ls -la'"
+        dest: "{{ brewfile }}"
+        content: |
+          {% for t in taps %}
+          tap "{{ t }}"
+          {% endfor %}
+          {% for p in packages + local.packages | default([]) %}
+          brew "{{ p.name | default(p) }}"{{ ', link: true' if p.link | default(false) else '' }}
+          {% endfor %}
+          {% for c in casks + local.casks | default([]) %}
+          cask "{{ c }}"
+          {% endfor %}
+      changed_when: false
 
-    - name: Add zsh-completions to FPATH and enable compinit (must be at end of file)
-      lineinfile:
-        path: ~/.zshrc
-        line: "{{ item }}"
-        state: present
-        insertafter: EOF
-      loop:
-        - "[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh"
-        - "FPATH=$(brew --prefix)/share/zsh-completions:$FPATH"
-        - "autoload -Uz compinit"
-        - "compinit"
-        - 'eval "$(/opt/homebrew/bin/mise activate zsh)"'
-        - 'eval "$(/opt/homebrew/bin/brew shellenv)"'
-        - 'cd projects'
+    - name: Update Homebrew
+      command: brew update -q
+      changed_when: false
 
-    - name: Ensure colima is configured
-      shell: colima start --profile rosetta --cpu 4 --memory 8 --disk 100 --arch aarch64 --vm-type=vz --vz-rosetta --mount-type virtiofs
-    - name: Add Kubectl autocomplete to zsh
-      shell: kubectl completion zsh > /opt/homebrew/etc/bash_completion.d/kubectx
-    - name: Create dnsmasq config directory
-      file:
-        path: "{{ lookup('pipe', 'brew --prefix') }}/etc"
-        state: directory
-    - name: Configure dnsmasq for *.test domains
-      lineinfile:
-        path: "{{ lookup('pipe', 'brew --prefix') }}/etc/dnsmasq.conf"
-        line: "{{ item }}"
-        create: true
-      loop:
-        - "address=/.test/127.0.0.1"
-        - "port=53"
-        - "address=/masterdata.bunker-holding.com/127.0.0.1"
-        - "address=/.sat-p-masterdata.azure.comp-host.com/127.0.0.1"
-        - "address=/.sat-s-masterdata.azure.comp-host.com/127.0.0.1"
-        - "address=/.bop-t.azure.comp-host.com/127.0.0.1"
-        - "server=1.1.1.1"
-    - name: Ensure dnsmasq autostarts and is running
-      command: brew services start dnsmasq
-      args:
-        creates: "/Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist"
-    - name: Restart dnsmasq if resolver files changed
-      command: brew services restart dnsmasq
-    - name: Configure DNS to use local resolver first
+    - name: Turn off Homebrew analytics
+      command: brew analytics off
+      when: "'enabled' in lookup('pipe', 'brew analytics state')"
+
+    - name: Clean up Homebrew
+      command: brew cleanup -q
+      changed_when: false
+
+    - name: Trust third-party taps
+      command: brew trust {{ item }}
+      loop: "{{ taps }}"
+      changed_when: false
+
+    - name: Install packages
+      command: brew bundle --file={{ brewfile }}
+      register: bundle
+      changed_when: "'Installing' in bundle.stdout or 'Upgrading' in bundle.stdout"
+
+    - name: Remove packages not in the lists
+      command: brew bundle cleanup --force --file={{ brewfile }}
+      register: cleanup
+      changed_when: "'Uninstall' in cleanup.stdout"
+      failed_when: false
+
+    - debug:
+        var: cleanup.stderr_lines
+      when: cleanup.rc != 0
+
+    - name: Apply pins
       shell: |
-        networksetup -listallnetworkservices | grep -v "An asterisk" | while read -r service; do
-          networksetup -setdnsservers "$service" 127.0.0.1
+        for f in $(brew list --pinned); do grep -qx "$f" pins || brew unpin "$f"; done
+        while read -r f; do [ -n "$f" ] && brew pin "$f"; done < pins
+        true
+      args:
+        chdir: "{{ playbook_dir }}"
+      changed_when: false
+
+    - name: Upgrade formulae
+      command: brew upgrade --formula
+      register: upgrade
+      changed_when: "'Upgrading' in upgrade.stdout"
+
+    - name: Upgrade casks
+      command: brew upgrade --cask
+      register: cask_upgrade
+      changed_when: "'Upgrading' in cask_upgrade.stdout"
+      failed_when: false
+
+    - name: Create docker config directory
+      file:
+        path: "{{ home }}/.docker"
+        state: directory
+
+    - name: Let docker find the Homebrew plugins
+      copy:
+        dest: "{{ docker_config }}"
+        content: "{{ (lookup('file', docker_config, errors='ignore') | default('{}', true) | from_json) | combine({'cliPluginsExtraDirs': [brew_prefix ~ '/lib/docker/cli-plugins']}) | to_nice_json }}"
+      no_log: true
+
+    - name: Create mise conf.d directory
+      file:
+        path: "{{ home }}/.config/mise/conf.d"
+        state: directory
+
+    - name: Link mise.toml into mise conf.d
+      file:
+        src: "{{ playbook_dir }}/mise.toml"
+        dest: "{{ home }}/.config/mise/conf.d/bootstrap.toml"
+        state: link
+
+    - name: Trust mise.toml
+      command: mise trust {{ playbook_dir }}/mise.toml
+      changed_when: false
+
+    - name: Install mise tools
+      command: mise install
+      register: mise_install
+      changed_when: "'all tools are installed' not in mise_install.stderr"
+
+    - name: Remove mise tools not in any config
+      command: mise prune --yes
+      register: mise_prune
+      changed_when: "'remov' in mise_prune.stderr"
+
+    - name: Find applications not from a cask or allowed-apps
+      shell: |
+        managed=$(brew info --json=v2 --installed | jq -r '.casks[].artifacts[] | .app? // empty | .[] | if type=="object" then .target else . end | split("/")[-1]')
+        for app in /Applications/*.app; do
+          name=$(basename "$app")
+          grep -qxF "$name" allowed-apps || grep -qxF "$name" <<<"$managed" || echo "$name"
         done
+        true
+      args:
+        chdir: "{{ playbook_dir }}"
+        executable: /bin/bash
+      register: apps
+      changed_when: false
+
+    - debug:
+        msg: "Unmanaged applications: {{ apps.stdout_lines | join(', ') }}"
+      when: apps.stdout != ""
+
+    - name: Let Composer fetch private GitHub packages
+      shell: composer config -g github-oauth.github.com "$(gh auth token)"
+      changed_when: false
+      no_log: true
+
+    - name: Scan installed formulae for vulnerabilities
+      command: brew vulns --severity high --fix-available
+      register: vulns
+      failed_when: false
+      changed_when: false
+
+    - debug:
+        var: vulns.stdout_lines
+      when: vulns.rc != 0
+
+    - name: Set git defaults
+      community.general.git_config:
+        scope: global
+        name: "{{ item.name }}"
+        value: "{{ item.value }}"
+      loop:
+        - { name: init.defaultBranch, value: main }
+        - { name: push.autoSetupRemote, value: "true" }
+
+    - name: Enable mise nvmrc support
+      command: mise settings add idiomatic_version_file_enable_tools node
+      changed_when: false
+
+    - name: Trust mise config in the projects folder
+      command: mise settings add trusted_config_paths {{ home }}/projects
+      changed_when: false
+
+    - name: Put mise shims on the PATH for non-interactive shells
+      lineinfile:
+        path: "{{ home }}/.zprofile"
+        line: export PATH="$HOME/.local/share/mise/shims:$PATH"
+        create: true
+
+    - name: Seed zshrc on a fresh machine
+      copy:
+        src: resources/zshrc
+        dest: "{{ home }}/.zshrc"
+        force: false
+
+    - name: Sync aliases
+      blockinfile:
+        path: "{{ home }}/.zshrc"
+        marker: "# {mark} BOOTSTRAP"
+        block: "{{ aliases | join('\n') }}"
+
+    - name: Create Colima VM
+      shell: colima start --vm-type vz --vz-rosetta --mount-type virtiofs --cpu 4 --memory 8 && colima stop
+      args:
+        creates: "{{ home }}/.colima/default"
+
+    - name: Schedule weekly update
+      template:
+        src: templates/update.plist.j2
+        dest: "{{ agent }}"
+      notify: Reload update agent
+
+  handlers:
+    - name: Reload update agent
+      shell: |
+        [ "${XPC_SERVICE_NAME:-}" = com.nicolaj.bootstrap-update ] && exit 0
+        launchctl bootout gui/$(id -u)/com.nicolaj.bootstrap-update 2>/dev/null
+        launchctl bootstrap gui/$(id -u) {{ agent }}
