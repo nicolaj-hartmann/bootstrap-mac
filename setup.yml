@@ -57,7 +57,8 @@
       - openstackclient
       - p7zip
       - packer
-      - php
+      - { name: shivammathur/php/php@8.5, link: true }
+      - shivammathur/extensions/xdebug@8.5
       - pi-coding-agent
       - pkgconf
       - podman
@@ -86,6 +87,8 @@
     taps:
       - mobile-dev-inc/tap
       - open-banking-io/tap
+      - shivammathur/extensions
+      - shivammathur/php
       - youssofal/mtplx
     casks:
       - android-commandlinetools
@@ -302,6 +305,22 @@
       register: cask_upgrade
       changed_when: "'Upgrading' in cask_upgrade.stdout"
       failed_when: false
+
+    - name: Find the PHP ini directory
+      command: php -r 'echo PHP_CONFIG_FILE_SCAN_DIR;'
+      register: php_ini_dir
+      changed_when: false
+      check_mode: false
+
+    - name: Configure Xdebug for PhpStorm
+      copy:
+        dest: "{{ php_ini_dir.stdout }}/99-xdebug.ini"
+        content: |
+          xdebug.mode=debug
+          xdebug.start_with_request=yes
+          xdebug.client_host=127.0.0.1
+          xdebug.client_port=9003
+          xdebug.log_level=0
 
     - name: Create docker config directory
       file:
