@@ -165,6 +165,9 @@
     - name: System setup
       become: true
       tags: system
+      environment:
+        HOMEBREW_CACHE: "{{ home }}/Library/Caches/Homebrew"
+        HOMEBREW_NO_AUTO_UPDATE: "1"
       block:
         - name: Enable Touch ID for sudo
           copy:
