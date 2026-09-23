@@ -16,7 +16,7 @@ GitHub, clones this repo to `~/bootstrap-mac` and runs `setup.yml`.
   on one machine go in a gitignored `setup.local.yml`, see the example.
 - `mise.toml`: CLI tools at exact versions, linked into mise's `conf.d`. The `bump`
   workflow opens a PR with new versions every Monday.
-- `aliases.yml`: a managed block in `.zshrc`. `resources/zshrc` seeds the file on a fresh
+- `aliases.yml`: a managed block in `.zshrc`. `resources/.zshrc` seeds the file on a fresh
   machine and is never written again.
 - `allowed-apps`: apps in `/Applications` that did not come from a cask and should not be
   reported.

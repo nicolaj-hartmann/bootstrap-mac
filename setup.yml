@@ -385,9 +385,16 @@
 
     - name: Seed zshrc on a fresh machine
       copy:
-        src: resources/zshrc
+        src: resources/.zshrc
         dest: "{{ home }}/.zshrc"
         force: false
+
+    - name: Link the powerlevel10k config
+      file:
+        src: "{{ playbook_dir }}/resources/.p10k.zsh"
+        dest: "{{ home }}/.p10k.zsh"
+        state: link
+        force: true
 
     - name: Sync aliases
       blockinfile:
