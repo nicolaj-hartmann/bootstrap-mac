@@ -247,14 +247,15 @@
       command: brew analytics off
       when: "'enabled' in lookup('pipe', 'brew analytics state')"
 
-    - name: Clean up Homebrew
-      command: brew cleanup -q
-      changed_when: false
-
     - name: Trust third-party taps
       command: brew trust {{ item }}
       loop: "{{ taps }}"
       changed_when: false
+
+    - name: Clean up Homebrew
+      command: brew cleanup -q
+      changed_when: false
+      failed_when: false
 
     - name: Install packages
       shell: set -o pipefail; brew bundle --no-upgrade --verbose --file={{ brewfile }} 2>&1 | tee -a {{ log }}
