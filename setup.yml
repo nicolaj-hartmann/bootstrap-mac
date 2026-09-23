@@ -335,11 +335,6 @@
       register: mise_install
       changed_when: "'all tools are installed' not in mise_install.stdout"
 
-    - name: Remove mise tools not in any config
-      command: mise prune --yes
-      register: mise_prune
-      changed_when: "'remov' in mise_prune.stderr"
-
     - name: Find applications not from a cask or allowed-apps
       shell: |
         managed=$(brew info --json=v2 --installed | jq -r '.casks[].artifacts[] | .app? // empty | .[] | if type=="object" then .target else . end | split("/")[-1]')
