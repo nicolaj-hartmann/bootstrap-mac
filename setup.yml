@@ -258,7 +258,7 @@
       changed_when: false
 
     - name: Install packages
-      shell: set -o pipefail; brew bundle --verbose --file={{ brewfile }} 2>&1 | tee -a {{ log }}
+      shell: set -o pipefail; brew bundle --no-upgrade --verbose --file={{ brewfile }} 2>&1 | tee -a {{ log }}
       args:
         executable: /bin/bash
       register: bundle
