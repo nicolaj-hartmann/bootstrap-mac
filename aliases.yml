@@ -27,5 +27,6 @@ aliases:
   - alias tf='tofu'
   - alias l='ls -la'
   - alias dev='mise run start'
+  - alias devsd='mise run stop'
   - alias confsync='cd ~/bootstrap-mac && git pull && ansible-playbook setup.yml --ask-become-pass'
   - '[[ $PWD == $HOME ]] && cd ~/projects'
