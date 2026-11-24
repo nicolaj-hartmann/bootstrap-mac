@@ -8,11 +8,10 @@ auto_switch = false
 new_cwd = "follow"
 
 [keys]
-prefix = "ctrl+a"
 next_tab = ["prefix+n", "ctrl+tab"]
 previous_tab = ["prefix+p", "ctrl+shift+tab"]
-next_agent = "prefix+]"
-previous_agent = "prefix+["
+next_agent = "prefix+period"
+previous_agent = "prefix+comma"
 focus_agent = "prefix+alt+1..9"
 
 [[keys.command]]
