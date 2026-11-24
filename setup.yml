@@ -146,6 +146,7 @@
       - zen
     codium_extensions: [ts, tsx, js, jsx, mjs, html, css, scss, vue]
     codium_override_extensions: [jsx, scss, sass, less, vue, cjs, cts]
+    rider_unregistered_extensions: [dsl]
     rider_extensions: [txt, md, json, jsonc, yml, yaml, toml, xml, graphql, gql, sql, sh, zsh, env, conf, ini, log, csv, cs, py, go, rs, php, tf, dsl, kt, java, swift]
     claude_marketplaces:
       - thedotmack/claude-mem
@@ -367,6 +368,15 @@
                     if role in handler:
                         handler[role] = 'com.vscodium'
                 handler['LSHandlerModificationDate'] = int(time.time())
+        known = {h.get('LSHandlerContentTag') for h in prefs['LSHandlers']}
+        for ext in {{ rider_unregistered_extensions }}:
+            if ext not in known:
+                prefs['LSHandlers'].append({
+                    'LSHandlerContentTag': ext,
+                    'LSHandlerContentTagClass': 'public.filename-extension',
+                    'LSHandlerRoleAll': 'com.jetbrains.rider',
+                    'LSHandlerModificationDate': int(time.time()),
+                })
         plistlib.dump(prefs, open(path, 'wb'))
         PY
         killall lsd || true
