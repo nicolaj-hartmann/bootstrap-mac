@@ -144,7 +144,7 @@
       - vscodium
       - wifiman
       - zen
-    codium_extensions: [ts, tsx, js, jsx, mjs, html, css, scss, vue]
+    codium_extensions: [ts, tsx, js, jsx, mjs, css, scss, vue]
     codium_override_extensions: [jsx, scss, sass, less, vue, cjs, cts]
     rider_unregistered_extensions: [dsl]
     rider_extensions: [txt, md, json, jsonc, yml, yaml, toml, xml, graphql, gql, sql, sh, zsh, env, conf, ini, log, csv, cs, py, go, rs, php, tf, dsl, kt, java, swift]
@@ -354,6 +354,12 @@
       command: duti -s com.vscodium .{{ item }} all
       loop: "{{ codium_extensions }}"
       changed_when: false
+
+    - name: Open links and HTML in Zen
+      command: duti -s app.zen-browser.zen {{ item }} all
+      loop: [http, https, public.html, public.xhtml]
+      changed_when: false
+      failed_when: false
 
     - name: Take over the extensions Rider registers itself
       shell: |
