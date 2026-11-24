@@ -36,10 +36,10 @@
       - gpac
       - graphviz
       - hcloud
+      - herdr
       - hugo
       - jadx
       - k3d
-      - kube-ps1
       - kubebuilder
       - libtool
       - livekit-cli
@@ -106,6 +106,7 @@
       - dotnet-sdk
       - element
       - flutter
+      - font-meslo-lg-nerd-font
       - font-montserrat
       - gcloud-cli
       - godot
@@ -142,6 +143,22 @@
       - vscodium
       - wifiman
       - zen
+    claude_marketplaces:
+      - thedotmack/claude-mem
+      - anthropics/claude-plugins-official
+      - blader/humanizer
+      - obra/superpowers-marketplace
+    claude_plugins:
+      - claude-mem@thedotmack
+      - clangd-lsp@claude-plugins-official
+      - postman@claude-plugins-official
+      - humanizer@humanizer
+      - superpowers@superpowers-marketplace
+      - slack@anthropic-plugin-directory
+    claude_mcp_servers:
+      - { name: workos, url: "https://mcp.workos.com/mcp" }
+      - { name: cloudflare, url: "https://mcp.cloudflare.com/mcp" }
+      - { name: notion, url: "https://mcp.notion.com/mcp" }
     arch: "{{ lookup('pipe', 'uname -m') }}"
     home: "{{ lookup('env', 'HOME') }}"
     brew_prefix: "{{ '/opt/homebrew' if arch == 'arm64' else '/usr/local' }}"
@@ -205,11 +222,6 @@
           loop:
             - address=/.test/127.0.0.1
             - port=53
-            - address=/masterdata.bunker-holding.com/127.0.0.1
-            - address=/.sat-p-masterdata.azure.comp-host.com/127.0.0.1
-            - address=/.sat-s-masterdata.azure.comp-host.com/127.0.0.1
-            - address=/.bop-t.azure.comp-host.com/127.0.0.1
-            - address=/.bop-p.azure.comp-host.com/127.0.0.1
             - server=1.1.1.1
           register: dnsmasq_conf
 
@@ -332,6 +344,53 @@
         dest: "{{ docker_config }}"
         content: "{{ (lookup('file', docker_config, errors='ignore') | default('{}', true) | from_json) | combine({'cliPluginsExtraDirs': [brew_prefix ~ '/lib/docker/cli-plugins']}) | to_nice_json }}"
       no_log: true
+
+    - name: Add Claude Code plugin marketplaces
+      command: claude plugin marketplace add {{ item }}
+      loop: "{{ claude_marketplaces }}"
+      changed_when: false
+      failed_when: false
+
+    - name: Install Claude Code plugins
+      shell: |
+        jq -e '.enabledPlugins["{{ item }}"]' ~/.claude/settings.json >/dev/null 2>&1 || claude plugin install {{ item }}
+      loop: "{{ claude_plugins }}"
+      register: claude_plugin_install
+      changed_when: "'Installing' in claude_plugin_install.stdout"
+      failed_when: false
+
+    - name: Add Claude Code MCP servers
+      shell: |
+        jq -e '.mcpServers["{{ item.name }}"]' ~/.claude.json >/dev/null 2>&1 || claude mcp add --scope user --transport http {{ item.name }} {{ item.url }}
+      loop: "{{ claude_mcp_servers }}"
+      register: claude_mcp_add
+      changed_when: "'Added' in claude_mcp_add.stdout"
+      failed_when: false
+
+    - name: Create herdr config directory
+      file:
+        path: "{{ home }}/.config/herdr"
+        state: directory
+
+    - name: Link Claude Code user instructions
+      file:
+        src: "{{ playbook_dir }}/resources/claude/CLAUDE.md"
+        dest: "{{ home }}/.claude/CLAUDE.md"
+        state: link
+        force: true
+
+    - name: Link herdr config
+      file:
+        src: "{{ playbook_dir }}/resources/herdr/config.toml"
+        dest: "{{ home }}/.config/herdr/config.toml"
+        state: link
+        force: true
+
+    - name: Load iTerm settings from this repo
+      shell: |
+        defaults write com.googlecode.iterm2 PrefsCustomFolder -string "{{ playbook_dir }}/resources"
+        defaults write com.googlecode.iterm2 LoadPrefsFromCustomFolder -bool true
+      when: lookup('pipe', 'defaults read com.googlecode.iterm2 PrefsCustomFolder 2>/dev/null || true') != playbook_dir ~ '/resources'
 
     - name: Create mise conf.d directory
       file:

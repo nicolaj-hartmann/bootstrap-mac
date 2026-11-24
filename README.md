@@ -18,6 +18,8 @@ GitHub, clones this repo to `~/bootstrap-mac` and runs `setup.yml`.
   workflow opens a PR with new versions every Monday.
 - `aliases.yml`: a managed block in `.zshrc`. `resources/.zshrc` seeds the file on a fresh
   machine and is never written again.
+- `resources/`: iTerm loads its settings from `com.googlecode.iterm2.plist` here, `herdr/` and `claude/CLAUDE.md` are symlinked into `~/.config/herdr` and `~/.claude`.
+- Claude Code marketplaces, plugins and user-scope MCP servers are listed at the top of `setup.yml`.
 - `allowed-apps`: apps in `/Applications` that did not come from a cask and should not be
   reported.
 - `pins`: formulae held at their installed version.
