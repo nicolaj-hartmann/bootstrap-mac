@@ -145,6 +145,7 @@
       - wifiman
       - zen
     codium_extensions: [ts, tsx, js, jsx, mjs, html, css, scss, vue]
+    codium_override_extensions: [jsx, scss, sass, less, vue, cjs, cts]
     rider_extensions: [txt, md, json, jsonc, yml, yaml, toml, xml, graphql, gql, sql, sh, zsh, env, conf, ini, log, csv, cs, py, go, rs, php, tf, dsl, kt, java, swift]
     claude_marketplaces:
       - thedotmack/claude-mem
@@ -351,6 +352,24 @@
     - name: Open code in VSCodium
       command: duti -s com.vscodium .{{ item }} all
       loop: "{{ codium_extensions }}"
+      changed_when: false
+
+    - name: Take over the extensions Rider registers itself
+      shell: |
+        python3 -I - <<'PY'
+        import os, plistlib, time
+        path = os.path.expanduser('~/Library/Preferences/com.apple.LaunchServices/com.apple.launchservices.secure.plist')
+        prefs = plistlib.load(open(path, 'rb'))
+        wanted = {{ codium_override_extensions }}
+        for handler in prefs['LSHandlers']:
+            if handler.get('LSHandlerContentTag') in wanted:
+                for role in ('LSHandlerRoleAll', 'LSHandlerRoleEditor', 'LSHandlerRoleViewer'):
+                    if role in handler:
+                        handler[role] = 'com.vscodium'
+                handler['LSHandlerModificationDate'] = int(time.time())
+        plistlib.dump(prefs, open(path, 'wb'))
+        PY
+        killall lsd || true
       changed_when: false
 
     - name: Open everything else in Rider
