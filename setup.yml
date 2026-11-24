@@ -24,6 +24,7 @@
       - docker
       - docker-buildx
       - docker-compose
+      - duti
       - fastlane
       - ffmpeg
       - firebase-cli
@@ -143,6 +144,8 @@
       - vscodium
       - wifiman
       - zen
+    codium_extensions: [ts, tsx, js, jsx, mjs, html, css, scss, vue]
+    rider_extensions: [txt, md, json, jsonc, yml, yaml, toml, xml, graphql, gql, sql, sh, zsh, env, conf, ini, log, csv, cs, py, go, rs, php, tf, dsl, kt, java, swift]
     claude_marketplaces:
       - thedotmack/claude-mem
       - anthropics/claude-plugins-official
@@ -344,6 +347,16 @@
         dest: "{{ docker_config }}"
         content: "{{ (lookup('file', docker_config, errors='ignore') | default('{}', true) | from_json) | combine({'cliPluginsExtraDirs': [brew_prefix ~ '/lib/docker/cli-plugins']}) | to_nice_json }}"
       no_log: true
+
+    - name: Open code in VSCodium
+      command: duti -s com.vscodium .{{ item }} all
+      loop: "{{ codium_extensions }}"
+      changed_when: false
+
+    - name: Open everything else in Rider
+      command: duti -s com.jetbrains.rider .{{ item }} all
+      loop: "{{ rider_extensions }}"
+      changed_when: false
 
     - name: Add Claude Code plugin marketplaces
       command: claude plugin marketplace add {{ item }}
