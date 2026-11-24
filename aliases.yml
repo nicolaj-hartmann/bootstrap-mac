@@ -28,5 +28,7 @@ aliases:
   - alias l='ls -la'
   - alias dev='mise run start'
   - alias devsd='mise run stop'
+  - alias ccp='claude'
+  - alias ccw='CLAUDE_CONFIG_DIR=~/.claude-work claude'
   - alias confsync='cd ~/bootstrap-mac && git pull && ansible-playbook setup.yml --ask-become-pass'
   - '[[ $PWD == $HOME ]] && cd ~/projects'
